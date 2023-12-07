@@ -32,18 +32,36 @@ def func():
 
     almanac.insert(len(almanac), last_line_mappings)
 
+    # Poor poor cpu cycles. I will never get you back
+    # for i, mappings in enumerate(almanac):
+    #     print(i)
+    #     temp_mapping = {}
+
+    #     for j, mapping in enumerate(mappings):
+    #         [destination, source, range_length] = mapping
+
+    #         for k in range(range_length):
+    #             temp_mapping[source + k] = destination + k
+    #     for idx, seed in enumerate(seeds):
+    #         value = temp_mapping[seed] if seed in temp_mapping else seed
+    #         seeds[idx] = value
+
     for i, mappings in enumerate(almanac):
-        print(i)
-        temp_mapping = {}
-
-        for j, mapping in enumerate(mappings):
-            [destination, source, range_length] = mapping
-
-            for k in range(range_length):
-                temp_mapping[source + k] = destination + k
         for idx, seed in enumerate(seeds):
-            value = temp_mapping[seed] if seed in temp_mapping else seed
-            seeds[idx] = value
+
+            next_val = seed
+
+            for j, mapping in enumerate(mappings):
+                [destination, source, range_length] = mapping
+
+                if source <= seed:
+                    distance = seed - source
+                    if distance < range_length:
+                        destination += distance
+                        next_val = destination
+                        break
+
+            seeds[idx] = next_val
 
     print(min(seeds))
 
