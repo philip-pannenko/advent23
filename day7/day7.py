@@ -1,8 +1,8 @@
 import re
 
-IS_DEBUG = True
+IS_DEBUG = False
 
-SORT_ORDER = {"A": 14, "K": 13, "Q": 12, "J": 11, "T": 10, "9": 9, "8": 8,
+SORT_ORDER = {"A": 14, "K": 13, "Q": 12, "J": 0, "T": 10, "9": 9, "8": 8,
               "7": 7, "6": 6, "5": 5, "4": 4, "3": 3, "2": 2, "1": 1}
 
 TYPE = {"Five of a kind": 6,
@@ -38,12 +38,41 @@ def func():
             hand['cards'] = cards
             hand['unsorted'] = cards_unsorted
 
-            pattern = re.compile(r'(\w)\1+')
+            pattern = re.compile(r'([A-I]|[K-Z]|[2-9])\1+')
 
             candidate_types = []
 
             for itr in re.finditer(pattern, cards):
                 candidate_types.append(len(itr.group()))
+
+            jokers = 0
+            pattern_jokers = re.compile(r'[jJ]+')
+            for itr in re.finditer(pattern_jokers, cards):
+                jokers += len(itr.group())
+
+            # It appears that the wildcard will increment the hand type 'up' by one tier
+            if jokers != 0:
+                if len(candidate_types) == 0:
+
+                    # Unique path for when the hand is all jokers.
+                    if jokers == 5:
+                        candidate_types.append(jokers)
+                    
+                    # Or for when it's just a type of High Cards
+                    else:
+                        candidate_types.append(jokers + 1)
+
+                elif len(candidate_types) == 1:
+                    candidate_types[0] += jokers
+                elif len(candidate_types) == 2:
+
+                    # Unique path to identify if a Full House or Two Pair
+                    if candidate_types[0] == 3:
+                        candidate_types[0] += jokers
+                    elif candidate_types[1] == 3:
+                        candidate_types[1] += jokers
+                    else:
+                        candidate_types[0] += jokers
 
             # if there are more than one same same cards in the hand
             if len(candidate_types) == 1:
