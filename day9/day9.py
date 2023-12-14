@@ -1,13 +1,13 @@
 import re
 
-IS_PART1 = True
+IS_PART1 = False
 IS_DEBUG = False
 
 
 def func():
     total = 0
     report = []
-    with open('./day9/example-input.txt', 'r', encoding="utf8") as file:
+    with open('./day9/actual-input.txt', 'r', encoding="utf8") as file:
 
         pattern = re.compile(r'-?[\w]+')
 
@@ -34,7 +34,7 @@ def func():
                 if idx == 0:
                     next_sequence = []
 
-                # Compare the current value against the previous 
+                # Compare the current value against the previous
                 #   and append the result to the next sequence
                 else:
                     previous_value = sequence_of_differences[-1][idx-1]
@@ -56,11 +56,11 @@ def func():
         sequence_of_difference = history.pop()
         increment = 0
         while len(history) >= 0:
-            val = sequence_of_difference.pop()
+            val = sequence_of_difference.pop() if IS_PART1 else sequence_of_difference.pop(0)
             if IS_DEBUG:
                 print('  Add ' + str(val) + ' to ' +
                       str(increment) + ' for a total of ', end='')
-            increment += val
+            increment = val + (increment if IS_PART1 else -increment)
 
             if IS_DEBUG:
                 print(str(increment) + '.')
